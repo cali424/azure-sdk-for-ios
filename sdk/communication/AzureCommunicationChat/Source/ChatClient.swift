@@ -102,6 +102,8 @@ public class ChatClient {
                 shareHistoryTime: participant.shareHistoryTime
             )
         }
+
+        self.signallingClient = CommunicationSignallingClient(token: token)
     }
 
     // MARK: Public Methods
