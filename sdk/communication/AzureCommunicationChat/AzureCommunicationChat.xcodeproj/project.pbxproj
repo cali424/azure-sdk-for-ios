@@ -18,9 +18,6 @@
 		9766BE9261FCB48436FA6682 /* Pods_AzureCommunicationChatTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F1FE3013E797A134E8A6C3B5 /* Pods_AzureCommunicationChatTests.framework */; };
 		D10458A725EEA47800B3EB6D /* CommunicationSignallingClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = D10458A125EEA47800B3EB6D /* CommunicationSignallingClient.swift */; };
 		D10458A825EEA47800B3EB6D /* TrouterUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = D10458A225EEA47800B3EB6D /* TrouterUtils.swift */; };
-		D10458A925EEA47800B3EB6D /* TrouterNotificationPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = D10458A325EEA47800B3EB6D /* TrouterNotificationPayload.swift */; };
-		D10458AA25EEA47800B3EB6D /* TrouterSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = D10458A425EEA47800B3EB6D /* TrouterSettings.swift */; };
-		D10458AB25EEA47800B3EB6D /* chat.swift in Sources */ = {isa = PBXBuildFile; fileRef = D10458A625EEA47800B3EB6D /* chat.swift */; };
 		D10458D025EEA54700B3EB6D /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D10458CF25EEA54700B3EB6D /* CoreTelephony.framework */; };
 		D10458D225EEA55400B3EB6D /* libc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = D10458D125EEA55400B3EB6D /* libc++.tbd */; };
 		D10458D725EEA57400B3EB6D /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = D10458D625EEA57400B3EB6D /* libz.tbd */; };
@@ -50,6 +47,14 @@
 		D147E69825CE2485001CFB5D /* CreateThreadResponse.json in Resources */ = {isa = PBXBuildFile; fileRef = D1BA104525807B0B00CA7130 /* CreateThreadResponse.json */; };
 		D1565C71256DB74900AF45F8 /* ChatClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1565C70256DB74900AF45F8 /* ChatClient.swift */; };
 		D1565C74256DB76C00AF45F8 /* ChatThreadClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1565C73256DB76C00AF45F8 /* ChatThreadClient.swift */; };
+		D15C168B25FEEEF300F1F6BA /* TrouterUrlRegistrar.h in Sources */ = {isa = PBXBuildFile; fileRef = D104589B25EEA47800B3EB6D /* TrouterUrlRegistrar.h */; };
+		D15C168C25FEEEF300F1F6BA /* Trouter.h in Sources */ = {isa = PBXBuildFile; fileRef = D104589C25EEA47800B3EB6D /* Trouter.h */; };
+		D15C168D25FEEEF300F1F6BA /* SelfHostedTrouterClient.h in Sources */ = {isa = PBXBuildFile; fileRef = D104589D25EEA47800B3EB6D /* SelfHostedTrouterClient.h */; };
+		D15C168E25FEEEF300F1F6BA /* TrouterSkypetokenProvider.h in Sources */ = {isa = PBXBuildFile; fileRef = D104589E25EEA47800B3EB6D /* TrouterSkypetokenProvider.h */; };
+		D15C168F25FEEEF300F1F6BA /* module.modulemap in Sources */ = {isa = PBXBuildFile; fileRef = D10458A025EEA47800B3EB6D /* module.modulemap */; };
+		D15C169025FEEEF300F1F6BA /* TrouterNotificationPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = D10458A325EEA47800B3EB6D /* TrouterNotificationPayload.swift */; };
+		D15C169125FEEEF300F1F6BA /* TrouterSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = D10458A425EEA47800B3EB6D /* TrouterSettings.swift */; };
+		D15C169225FEEEF300F1F6BA /* chat.swift in Sources */ = {isa = PBXBuildFile; fileRef = D10458A625EEA47800B3EB6D /* chat.swift */; };
 		D15E98FE25B7C80C00E63DB2 /* Chat+ListChatThreadsOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D15E98CF25B7C80C00E63DB2 /* Chat+ListChatThreadsOptions.swift */; };
 		D15E98FF25B7C80C00E63DB2 /* Chat+DeleteChatThreadOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D15E98D025B7C80C00E63DB2 /* Chat+DeleteChatThreadOptions.swift */; };
 		D15E990025B7C80C00E63DB2 /* AzureCommunicationChatClientOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D15E98D125B7C80C00E63DB2 /* AzureCommunicationChatClientOptions.swift */; };
@@ -884,6 +889,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 0;
 			files = (
+				D15C168B25FEEEF300F1F6BA /* TrouterUrlRegistrar.h in Sources */,
+				D15C168C25FEEEF300F1F6BA /* Trouter.h in Sources */,
+				D15C168D25FEEEF300F1F6BA /* SelfHostedTrouterClient.h in Sources */,
+				D15C168E25FEEEF300F1F6BA /* TrouterSkypetokenProvider.h in Sources */,
+				D15C168F25FEEEF300F1F6BA /* module.modulemap in Sources */,
+				D15C169025FEEEF300F1F6BA /* TrouterNotificationPayload.swift in Sources */,
+				D15C169125FEEEF300F1F6BA /* TrouterSettings.swift in Sources */,
+				D15C169225FEEEF300F1F6BA /* chat.swift in Sources */,
 				D1565C71256DB74900AF45F8 /* ChatClient.swift in Sources */,
 				D17C7B4825FBF4C3007AD39B /* ChatThread+SendTypingNotificationOptions.swift in Sources */,
 				D1565C74256DB76C00AF45F8 /* ChatThreadClient.swift in Sources */,
