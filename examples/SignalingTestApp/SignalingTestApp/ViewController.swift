@@ -13,11 +13,11 @@ import AzureCommunication
 import AzureCore
 
 struct Constants {
-    static let endpoint =  "<ACS_RESOURCE_ENDPOINT>"
-    static let id1 = "<USER_ID>"
-    static let skypeToken = "<ACCESS_TOKEN>"
-    static let id2 = "<USER_ID>"
-    static let skypeToken2 = "<ACCESS_TOKEN>"
+    static let endpoint =  ""
+    static let id1 = ""
+    static let skypeToken = ""
+    static let id2 = ""
+    static let skypeToken2 = ""
     
 }
 
@@ -153,17 +153,17 @@ extension ViewController: MyTableViewCellDelegate {
                 self.logArea.scrollRangeToVisible(range)
             }
         case "Create Thread":
-            let participant = Participant(from: ChatParticipant(
-                id: Constants.id1,
+            let participant = ChatParticipant(
+                id: CommunicationUserIdentifier(Constants.id1),
                 displayName: "Bob",
-                                            shareHistoryTime: Iso8601Date(string: "2020-10-30T10:50:50Z"))
+                shareHistoryTime: Iso8601Date(string: "2020-10-30T10:50:50Z")
             )
-            let participant2 = Participant(from: ChatParticipant(
-                id: Constants.id2,
+            let participant2 = ChatParticipant(
+                id: CommunicationUserIdentifier(Constants.id2),
                 displayName: "Alice",
-                                            shareHistoryTime: Iso8601Date(string: "2020-10-30T10:50:50Z"))
+                shareHistoryTime: Iso8601Date(string: "2020-10-30T10:50:50Z")
             )
-            let request = CreateThreadRequest(
+            let request = CreateChatThreadRequest(
                 topic: "Lunch Thread",
                 participants: [
                     participant,participant2
@@ -178,7 +178,7 @@ extension ViewController: MyTableViewCellDelegate {
                         let range = NSRange(location: self.logArea.text.count - 1, length: 0)
                         self.logArea.scrollRangeToVisible(range)
                     }
-                    guard let thread = response.thread else {
+                    guard let thread = response.chatThread else {
                         print("Failed to extract chatThread from response")
                         return
                     }
@@ -246,7 +246,7 @@ extension ViewController: MyTableViewCellDelegate {
                 return
             }
             
-            chatThreadClient2?.sendReadReceipt(forMessage: chatMessageId!, completionHandler: { result, _ in
+            chatThreadClient2?.sendReadReceipt(forMessage: chatMessageId!, completionHandler: { result, httpResponse in
                 switch result {
                 case let .success(response):
                     print(response)
@@ -256,8 +256,9 @@ extension ViewController: MyTableViewCellDelegate {
                         self.logArea.scrollRangeToVisible(range)
                     }
                     
-                case .failure:
-                    print("Unexpected failure happened in send read receipt")
+                case let .failure(error):
+                    print(httpResponse?.statusCode)
+                    print("Unexpected failure happened in send read receipt: \(error)")
                 }
             })
         case "Edit Message":
@@ -269,9 +270,8 @@ extension ViewController: MyTableViewCellDelegate {
                 showErrorWindow(with: "You need to send a message before you can edit the message")
                 return
             }
-            
-            let updateChatMessageRequest = UpdateChatMessageRequest(content: "Updated Message")
-            chatThreadClient?.update(message: updateChatMessageRequest, messageId: chatMessageId!, completionHandler: { result, _ in
+
+            chatThreadClient?.update(content: "Updated Message", messageId: chatMessageId!, completionHandler: { result, _ in
                 switch result {
                 case let .success(response):
                     print(response)
@@ -335,10 +335,10 @@ extension ViewController: MyTableViewCellDelegate {
                 showErrorWindow(with: "You need to creat a thread before you can add a participant")
                 return
             }
-            let participant = Participant(from: ChatParticipant(
-                id: generateId(),
+            let participant = ChatParticipant(
+                id: CommunicationUserIdentifier(generateId()),
                 displayName: "William",
-                shareHistoryTime: Iso8601Date(string: "2020-10-30T10:50:50Z"))
+                shareHistoryTime: Iso8601Date(string: "2020-10-30T10:50:50Z")
             )
             chatThreadClient?.add(participants: [participant], completionHandler: { result, _ in
                 switch result {
@@ -369,12 +369,13 @@ extension ViewController: MyTableViewCellDelegate {
                         response.nextItem { result in
                             switch result {
                             case let .success(participant):
-                                if participant.user.identifier == Constants.id1 || participant.user.identifier == Constants.id2
+                                let user = participant.id as! CommunicationUserIdentifier
+                                if user.identifier == Constants.id1 || user.identifier == Constants.id2
                                 {
                                     return
                                 }
                                 existLoop = true
-                                self.chatThreadClient?.remove(participant: participant.user.identifier, completionHandler: { result, _ in
+                                self.chatThreadClient?.remove(participant: user, completionHandler: { result, _ in
                                     switch result {
                                     case let .success(response):
                                         print(response)
@@ -542,13 +543,13 @@ class ViewController: UIViewController, UITableViewDataSource {
             print("\n------> ChatMessageReceivedEvent Received: ", response)
             print("\n------> threadId is: ", response.threadId)
             print("\n------> id is: ", response.id)
-            print("\n------> content is: ", response.content)
+            print("\n------> message is: ", response.message)
             
             DispatchQueue.main.async {
                 self.logArea.text += "\n------> ChatMessageReceivedEvent Received: "
                 self.logArea.text += "\n threadId is: " + String(response.threadId)
                 self.logArea.text += "\n id is: " + String(response.id)
-                self.logArea.text += "\n content is: " + String(response.content)
+                self.logArea.text += "\n message is: " + String(response.message)
                 self.logArea.text += "\n"
                 
                 let range = NSRange(location: self.logArea.text.count - 1, length: 0)
@@ -560,13 +561,13 @@ class ViewController: UIViewController, UITableViewDataSource {
             let response = response as! TypingIndicatorReceivedEvent
             print("\n------> TypingIndicatorReceivedEvent Received: ", response)
             print("\n------> threadId is: ", response.threadId)
-            print("\n------> receivedOn is: ", response.receivedOn)
+            print("\n------> receivedOn is: ", response.receivedOn?.requestString)
             print("\n------> version is: ", response.version)
             
             DispatchQueue.main.async {
                 self.logArea.text += "\n------> TypingIndicatorReceivedEvent Received: "
                 self.logArea.text += "\n threadId is: " + String(response.threadId)
-                self.logArea.text += "\n receivedOn is: " + String(response.receivedOn)
+                self.logArea.text += "\n receivedOn is: " + response.receivedOn!.requestString
                 self.logArea.text += "\n version is: " + String(response.version)
                 self.logArea.text += "\n"
                 
@@ -579,13 +580,13 @@ class ViewController: UIViewController, UITableViewDataSource {
             let response = response as! ReadReceiptReceivedEvent
             print("\n------> ReadReceiptReceivedEvent Received: ", response)
             print("\n------> threadId is: ", response.threadId)
-            print("\n------> readOn is: ", response.readOn)
+            print("\n------> readOn is: ", response.readOn?.requestString)
             print("\n------> chatMessageId is: ", response.chatMessageId)
             
             DispatchQueue.main.async {
                 self.logArea.text += "\n------> ReadReceiptReceivedEvent Received: "
                 self.logArea.text += "\n threadId is: " + String(response.threadId)
-                self.logArea.text += "\n readOn is: " + String(response.readOn)
+                self.logArea.text += "\n readOn is: " + String(response.readOn!.requestString)
                 self.logArea.text += "\n chatMessageId is: " + String(response.chatMessageId)
                 self.logArea.text += "\n"
                 
@@ -599,13 +600,13 @@ class ViewController: UIViewController, UITableViewDataSource {
             print("\n------> ChatMessageEditedEvent Received: ", response)
             print("\n------> threadId is: ", response.threadId)
             print("\n------> editedOn is: ", response.editedOn)
-            print("\n------> content is: ", response.content)
+            print("\n------> content is: ", response.message)
             
             DispatchQueue.main.async {
                 self.logArea.text += "\n------> ChatMessageEditedEvent Received: "
                 self.logArea.text += "\n threadId is: " + String(response.threadId)
-                self.logArea.text += "\n editedOn is: " + String(response.editedOn)
-                self.logArea.text += "\n content is: " + String(response.content)
+                self.logArea.text += "\n editedOn is: " + String(response.editedOn!.requestString)
+                self.logArea.text += "\n content is: " + String(response.message)
                 self.logArea.text += "\n"
                 
                 let range = NSRange(location: self.logArea.text.count - 1, length: 0)
@@ -622,7 +623,7 @@ class ViewController: UIViewController, UITableViewDataSource {
             DispatchQueue.main.async {
                 self.logArea.text += "\n------> ChatMessageDeletedEvent Received: "
                 self.logArea.text += "\n threadId is: " + String(response.threadId)
-                self.logArea.text += "\n deletedOn is: " + String(response.deletedOn)
+                self.logArea.text += "\n deletedOn is: " + String(response.deletedOn!.requestString)
                 self.logArea.text += "\n"
                 
                 let range = NSRange(location: self.logArea.text.count - 1, length: 0)
@@ -639,7 +640,7 @@ class ViewController: UIViewController, UITableViewDataSource {
             DispatchQueue.main.async {
                 self.logArea.text += "\n------> ChatThreadCreatedEvent Received: "
                 self.logArea.text += "\n threadId is: " + String(response.threadId)
-                self.logArea.text += "\n createdOn is: " + String(response.createdOn)
+                self.logArea.text += "\n createdOn is: " + String(response.createdOn!.requestString)
                 self.logArea.text += "\n"
                 
                 let range = NSRange(location: self.logArea.text.count - 1, length: 0)
@@ -656,7 +657,7 @@ class ViewController: UIViewController, UITableViewDataSource {
             DispatchQueue.main.async {
                 self.logArea.text += "\n------> ChatThreadPropertiesUpdatedEvent Received: "
                 self.logArea.text += "\n threadId is: " + String(response.threadId)
-                self.logArea.text += "\n updatedOn is: " + String(response.updatedOn)
+                self.logArea.text += "\n updatedOn is: " + String(response.updatedOn!.requestString)
                 self.logArea.text += "\n"
                 
                 let range = NSRange(location: self.logArea.text.count - 1, length: 0)
@@ -673,7 +674,7 @@ class ViewController: UIViewController, UITableViewDataSource {
             DispatchQueue.main.async {
                 self.logArea.text += "\n------> ChatThreadDeletedEvent Received: "
                 self.logArea.text += "\n threadId is: " + String(response.threadId)
-                self.logArea.text += "\n deletedOn is: " + String(response.deletedOn)
+                self.logArea.text += "\n deletedOn is: " + String(response.deletedOn!.requestString)
                 self.logArea.text += "\n"
                 
                 let range = NSRange(location: self.logArea.text.count - 1, length: 0)
@@ -690,8 +691,8 @@ class ViewController: UIViewController, UITableViewDataSource {
             DispatchQueue.main.async {
                 self.logArea.text += "\n------> ParticipantsAddedEvent Received: "
                 self.logArea.text += "\n threadId is: " + String(response.threadId)
-                self.logArea.text += "\n addedOn is: " + String(response.addedOn)
-                self.logArea.text += "\n shareHistoryTime is: " + String(((response.participantsAdded?[0].shareHistoryTime!)!))
+                self.logArea.text += "\n addedOn is: " + String(response.addedOn!.requestString)
+                self.logArea.text += "\n shareHistoryTime is: " + String(((response.participantsAdded?[0].shareHistoryTime?.requestString)!))
                 self.logArea.text += "\n"
                 
                 let range = NSRange(location: self.logArea.text.count - 1, length: 0)
@@ -708,8 +709,8 @@ class ViewController: UIViewController, UITableViewDataSource {
             DispatchQueue.main.async {
                 self.logArea.text += "\n------> ParticipantsRemovedEvent Received: "
                 self.logArea.text += "\n threadId is: " + String(response.threadId)
-                self.logArea.text += "\n removedOn is: " + String(response.removedOn)
-                self.logArea.text += "\n shareHistoryTime is: " + String(((response.participantsRemoved?[0].shareHistoryTime!)!))
+                self.logArea.text += "\n removedOn is: " + String(response.removedOn!.requestString)
+                self.logArea.text += "\n shareHistoryTime is: " + String(((response.participantsRemoved?[0].shareHistoryTime?.requestString)!))
                 self.logArea.text += "\n"
                 
                 let range = NSRange(location: self.logArea.text.count - 1, length: 0)
