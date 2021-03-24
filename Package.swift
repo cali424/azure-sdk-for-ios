@@ -69,7 +69,7 @@ let package = Package(
         ),
         .target(
             name: "AzureCommunicationChat",
-            dependencies: ["AzureCore", "AzureCommunication"],
+            dependencies: ["AzureCore", "AzureCommunication", "TrouterClientIos"],
             path: "sdk/communication/AzureCommunicationChat",
             exclude: [
                 "README.md",
