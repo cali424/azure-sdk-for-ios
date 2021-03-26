@@ -89,10 +89,10 @@ public enum MediaStreamType : Int {
 
     
     /// Video
-    case video = 0
+    case video = 1
 
     /// Screen share
-    case screenSharing = 1
+    case screenSharing = 2
 }
 
 /// State of a participant in the call
@@ -260,7 +260,7 @@ public protocol CallAgentDelegate : NSObjectProtocol {
     
     optional func callAgent(_ callAgent: CallAgent, didUpdateCalls args: CallsUpdatedEventArgs)
 
-    optional func callAgent(_ callAgent: CallAgent, didRecieveIncomingCall incomingcall: IncomingCall)
+    optional func callAgent(_ callAgent: CallAgent, didRecieveIncomingCall incomingCall: IncomingCall)
 }
 
 
@@ -308,7 +308,7 @@ public protocol RemoteParticipantDelegate : NSObjectProtocol {
 public protocol IncomingCallDelegate : NSObjectProtocol {
 
     
-    optional func incomingCall(_ incomingCall: IncomingCall, didEndCall args: PropertyChangedEventArgs)
+    optional func incomingCall(_ incomingCall: IncomingCall, didEnd args: PropertyChangedEventArgs)
 }
 
 
@@ -459,7 +459,7 @@ open class StartCallOptions : NSObject {
 
     
     // Class extension begins for StartCallOptions.
-    open var alternateCallerID: PhoneNumberIdentifier
+    open var alternateCallerId: PhoneNumberIdentifier
 }
 
 // Class extension ends for StartCallOptions.
@@ -476,7 +476,7 @@ open class AddPhoneNumberOptions : NSObject {
 
     
     // Class extension begins for AddPhoneNumberOptions.
-    open var alternateCallerID: PhoneNumberIdentifier
+    open var alternateCallerId: PhoneNumberIdentifier
 }
 
 // Class extension ends for AddPhoneNumberOptions.
@@ -628,7 +628,6 @@ open class CallAgent : NSObject {
     // Class extension begins for CallAgent.
     open func startCall(participants: [CommunicationIdentifier], options: StartCallOptions?) -> Call
 
-    /// Join a call using JoinMeetingLocator
     open func join(with meetingLocator: JoinMeetingLocator, joinCallOptions: JoinCallOptions?) -> Call
 
     open func registerPushNotifications(deviceToken: Data, completionHandler: @escaping (Error?) -> Void)
@@ -798,7 +797,7 @@ open class CallEndReason : NSObject {
 }
 
 
-/// Video stream on remote participant (NOT SUPPORTED)
+/// Video stream on remote participant
 open class RemoteVideoStream : NSObject {
 
     
@@ -828,7 +827,7 @@ open class PropertyChangedEventArgs : NSObject {
 }
 
 
-/// Information about remote video streams added or removed (NOT SUPPORTED)
+/// Information about remote video streams added or removed
 open class RemoteVideoStreamsEventArgs : NSObject {
 
     

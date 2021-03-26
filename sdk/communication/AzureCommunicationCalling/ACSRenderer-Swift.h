@@ -7,7 +7,7 @@
 
 public protocol RendererDelegate : NSObjectProtocol {
 
-    func videoStreamRenderer(didFailToStartRenderer renderer: VideoStreamRenderer)
+    func videoStreamRenderer(didFailToStart renderer: VideoStreamRenderer)
 
     
     optional func videoStreamRenderer(didRenderFirstFrame renderer: VideoStreamRenderer)
@@ -16,13 +16,13 @@ public protocol RendererDelegate : NSObjectProtocol {
 open class VideoStreamRenderer : NSObject {
 
     
-    public init(localVideoStream: ACSLocalVideoStream) throws
+    public init(localVideoStream: LocalVideoStream) throws
 
-    public init(remoteVideoStream: ACSRemoteVideoStream) throws
+    public init(remoteVideoStream: RemoteVideoStream) throws
 
     open func createView() throws -> RendererView
 
-    open func createView(with options: ACSRenderingOptions?) throws -> RendererView
+    open func createView(withOptions options: RenderingOptions?) throws -> RendererView
 
     open func dispose()
 
